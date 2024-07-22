@@ -1,20 +1,12 @@
 const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URL
-console.log('connecting to', url)
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-  .then(result => {
-    console.log('connected to MDB')
-  })
-  .catch(error => {
-    console.log('error connecting to MDB:', error.message)
-  })
-
-
 
 const taskSchema = new mongoose.Schema({
-  taskName: String,
+  taskName: {
+    type: String,
+    minLength: 1,
+    required: true
+  },
   description: String,
   status: String,
 })
