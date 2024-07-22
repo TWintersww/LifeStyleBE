@@ -1,5 +1,9 @@
+require('dotenv').config()
+const corsMiddleware = require('./utils/corsConfig')
 const express = require('express')
 const app = express()
+
+const Task = require('./models/task')
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -8,90 +12,115 @@ const requestLogger = (request, response, next) => {
   console.log('---')
   next()
 }
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({error: 'malformatted id'})
+  }
+
+  next(error)
+}
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
+app.use(corsMiddleware)
 app.use(express.json())
 app.use(requestLogger)
 
-let tasks = [
-      {
-        taskName: "leetcode",
-        description: "lc50",
-        status: 'todo',
-        id: '1'
-      },
-      {
-        taskName: 'webdev',
-        description: 'fso part 5',
-        status: 'todo',
-        id: '2'
-      },
-      {
-        taskName: 'linkedin',
-        description: 'add connections',
-        status: 'completed',
-        id: '3'
-      },
-      {
-        taskName: 'veryveryverylonglonglonglongname',
-        description: 'veryveryverylongdescription veryveryverylongdescription veryveryverylongdescriptionveryveryverylongdescription veryveryverylongdescription veryveryverylongdescription',
-        status: 'completed',
-        id: '4'
-      }
-    ]
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 app.get('/api/tasks', (request, response) => {
-  response.json(tasks)
+  Task.find({}).then(t => 
+    response.json(t)
+  )
 })
-app.get('/api/tasks/:id', (request, response) => {
+app.get('/api/tasks/:id', (request, response, next) => {
   const id = request.params.id
   // console.log('type of id:', typeof id)
 
-  const task = tasks.find(t => t.id === id)
-
-  if (task) {
-    response.json(task)
-  }
-  else {
-    response.status(404).end()
-  }
+  Task.findById(id)
+    .then(t => {
+      if (t) {
+        response.json(t)
+      }
+      else {
+        //rightly formatted id, but not found
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
-app.delete('/api/tasks/:id', (request, response) => {
+app.delete('/api/tasks/:id', (request, response, next) => {
   const id = request.params.id
-  tasks = tasks.filter(t => t.id !== id)
-
-  response.status(204).end()
+  Task.findByIdAndDelete(id)
+    .then(result => {
+      if (!result) {
+        console.log('no task deleted')
+      }
+      else {
+        console.log('task deleted:', result)
+      }
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/tasks', (request, response) => {
   //request.body made possible with express.json() middleware
   //which attaches json request data as js object in request.body
-  const newTask = request.body
+  const newTaskBody = request.body
 
-  if (!newTask.taskName) {
+  if (!newTaskBody.taskName) {
     return response.status(400).json({
       error: 'content missing'
     })
   }
 
-  const maxId = tasks.length > 0
-    ? Math.max(...tasks.map(t => Number(t.id)))
-    : 0
-  newTask.id = String(maxId + 1)
+  const newTask = new Task({
+    taskName: newTaskBody.taskName,
+    description: newTaskBody.description,
+    status: newTaskBody.status,
+  })
 
-  tasks = tasks.concat(newTask)
-  response.json(newTask)
+  newTask.save().then(savedTask => {
+    console.log('savedTask:', savedTask)
+    response.json(savedTask)
+  })
+})
+
+app.put('/api/tasks/:id', (request, response, next) => {
+  const id = request.params.id
+  const editedTaskBody = request.body
+
+  if (!editedTaskBody.taskName) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+
+  const editedTask = {
+    taskName: editedTaskBody.taskName,
+    description: editedTaskBody.description,
+    status: editedTaskBody.status,
+  }
+
+  Task.findByIdAndUpdate(id, editedTask, {new: true})
+    .then(updatedTask => {
+      console.log('updatedTask:', updatedTask)
+      response.json(updatedTask)
+    })
+    .catch(error => next(error))
 })
 
 app.use(unknownEndpoint)
+app.use(errorHandler)
 
-const PORT = 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
