@@ -9,6 +9,7 @@ const taskSchema = new mongoose.Schema({
   },
   description: String,
   status: String,
+  createDate: Date,
 })
 taskSchema.set('toJSON', {
   transform: (document, returnedObject) => {
