@@ -37,6 +37,7 @@ tasksRouter.post('/', async (request, response) => {
     taskName: newTaskBody.taskName,
     description: newTaskBody.description,
     status: newTaskBody.status,
+    hoursSpent: newTaskBody.hoursSpent,
     createDate: newTaskBody.createDate,
   })
 
@@ -47,12 +48,13 @@ tasksRouter.post('/', async (request, response) => {
 
 tasksRouter.put('/:id', async (request, response) => {
   const id = request.params.id
-  const {taskName, description, status, createDate} = request.body
+  const {taskName, description, status, hoursSpent, createDate} = request.body
 
   const editedTask = {
     taskName,
     description,
     status,
+    hoursSpent,
     createDate
   }
 

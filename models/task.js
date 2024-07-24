@@ -9,6 +9,7 @@ const taskSchema = new mongoose.Schema({
   },
   description: String,
   status: String,
+  hoursSpent: Number,
   createDate: Date,
 })
 taskSchema.set('toJSON', {
