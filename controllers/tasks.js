@@ -1,8 +1,14 @@
+const jwt = require('jsonwebtoken')
+const config = require('../utils/config')
 const tasksRouter = require('express').Router()
 const Task = require('../models/task')
+const User = require('../models/user')
+const userExtractor = require('../utils/middleware').userExtractor
+
 
 tasksRouter.get('/', async (request, response) => {
-  const tasks = await Task.find({})
+  const tasks = await Task
+    .find({}).populate('user', {username: 1, name: 1})
   console.log('tasks.js | tasks:', tasks)
   response.json(tasks)
 })
@@ -28,10 +34,12 @@ tasksRouter.delete('/:id', async (request, response) => {
   response.status(204).end()
 })
 
-tasksRouter.post('/', async (request, response) => {
+tasksRouter.post('/', userExtractor, async (request, response) => {
   //request.body made possible with express.json() middleware
   //which attaches json request data as js object in request.body
   const newTaskBody = request.body
+  const loggedInUserDocument = request.user
+  console.log('tasks.js | loggedInUserDocument:', loggedInUserDocument)
 
   const newTask = new Task({
     taskName: newTaskBody.taskName,
@@ -39,13 +47,22 @@ tasksRouter.post('/', async (request, response) => {
     status: newTaskBody.status,
     hoursSpent: newTaskBody.hoursSpent,
     createDate: newTaskBody.createDate,
+    //.id for Document instance is 'virtual getter'.
+    //automatically casts ObjectId to String representation
+    user: loggedInUserDocument.id
   })
 
   const savedTask = await newTask.save()
   console.log('tasks.js | savedTask:', savedTask)
+
+  loggedInUserDocument.tasks = loggedInUserDocument.tasks.concat(savedTask._id)
+  console.log('tasks.js | updated loggedInUserDocument.tasks:', loggedInUserDocument.tasks)
+  await loggedInUserDocument.save()
+
   response.status(201).json(savedTask)
 })
 
+//NEEDS UPDATE TO BE ON TRACK WITH USER HANDLING
 tasksRouter.put('/:id', async (request, response) => {
   const id = request.params.id
   const {taskName, description, status, hoursSpent, createDate} = request.body

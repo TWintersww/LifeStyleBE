@@ -11,6 +11,10 @@ const taskSchema = new mongoose.Schema({
   status: String,
   hoursSpent: Number,
   createDate: Date,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 taskSchema.set('toJSON', {
   transform: (document, returnedObject) => {

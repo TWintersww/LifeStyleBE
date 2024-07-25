@@ -19,12 +19,18 @@ mongoose.connect(config.MONGODB_URL)
 
 app.use(corsMiddleware)
 app.use(express.json())
+//attaches token string to request.token
+app.use(middleware.tokenExtractor)
 app.use(middleware.requestLogger)
 
 //Eliminates need for try/catch in router async calls
 require('express-async-errors')
 const tasksRouter = require('./controllers/tasks')
 app.use('/api/tasks', tasksRouter)
+const usersRouter = require('./controllers/users')
+app.use('/api/users', usersRouter)
+const loginRouter = require('./controllers/login')
+app.use('/api/login', loginRouter)
 
 
 app.use(middleware.unknownEndpoint)
