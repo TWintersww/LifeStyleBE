@@ -6,8 +6,10 @@ const User = require('../models/user')
 //request.token field gives token
 const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
+  console.log('tokenExtractor | authorization:', authorization)
   if (authorization && authorization.startsWith('Bearer ')) {
     const tokenString = authorization.replace('Bearer ', '')
+    console.log('tokenExtractor | tokenString:', tokenString)
     request.token = tokenString
   }
   
@@ -19,6 +21,11 @@ const userExtractor = async (request, response, next) => {
   if (!request.token) {
     return response.status(401).json({error: 'token missing'})
   }
+  //debugging code to inspect status of token
+  // const inspectToken= jwt.decode(request.token)
+  // console.log('inspectToken:', inspectToken)
+  // console.log('current time:', Math.floor(Date.now() / 1000))
+
   //if token parameter is null/invalid, throws JsonWebTokenError
   const decodedToken = jwt.verify(request.token, config.SECRET)
   //defensive programming to ensure payload structure
