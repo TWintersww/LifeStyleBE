@@ -10,7 +10,7 @@ const taskSchema = new mongoose.Schema({
   description: String,
   status: String,
   hoursSpent: Number,
-  createDate: Date,
+  createDate: String,
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
