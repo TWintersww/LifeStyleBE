@@ -1,6 +1,14 @@
 const mongoose = require('mongoose')
 
-
+/*
+Task: 
+  String taskName
+  String description
+  String status -> 'todo' or 'completed'
+  String hoursSpent -> whole or decimal Number as string
+  String createDate -> date as ISO string (UTC time)
+  User user
+*/
 const taskSchema = new mongoose.Schema({
   taskName: {
     type: String,

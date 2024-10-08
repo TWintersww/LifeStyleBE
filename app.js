@@ -5,6 +5,7 @@ const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 const express = require('express')
 const app = express()
+const path = require('path')
 
 logger.info('connecting to', config.MONGODB_URL)
 mongoose.set('strictQuery', false)
@@ -19,6 +20,12 @@ mongoose.connect(config.MONGODB_URL)
 
 app.use(corsMiddleware)
 app.use(express.json())
+app.use(express.static('dist'))
+//serves static uploads for journal coverimg
+app.use('/uploads', (req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    next()
+  }, express.static(path.join(__dirname, '/uploads')))
 //attaches token string to request.token
 app.use(middleware.tokenExtractor)
 app.use(middleware.requestLogger)
@@ -31,7 +38,12 @@ const usersRouter = require('./controllers/users')
 app.use('/api/users', usersRouter)
 const loginRouter = require('./controllers/login')
 app.use('/api/login', loginRouter)
+const journalRouter = require('./controllers/journal')
+app.use('/api/journal', journalRouter)
 
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+});
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

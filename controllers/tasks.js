@@ -6,40 +6,45 @@ const logger = require('../utils/logger')
 
 tasksRouter.get('/', userExtractor, async (request, response) => {
   const loggedInUserDocument = request.user
-  console.log(loggedInUserDocument)
+  // logger.info(loggedInUserDocument)
 
   const tasks = await Task
     .find({user: loggedInUserDocument._id}).populate('user', {username: 1, name: 1})
-  logger.info('tasks.js | tasks:', tasks)
+  // logger.info('tasks.js | tasks:', tasks)
   response.json(tasks)
 })
 // tasksRouter.get('/:id', async (request, response) => {
 //   const id = request.params.id
-//   // console.log('type of id:', typeof id)
+//   //logger.info('type of id:', typeof id)
 
 //   const theTask = await Task.findById(id)
-//   console.log('tasks.js | theTask:', theTask)
+//   logger.info('tasks.js | theTask:', theTask)
 //   response.json(theTask)
 // })
 
 //For admin purposes only
 tasksRouter.delete('/clearAll', async (request, response) => {
   await Task.deleteMany({})
-  logger.info('clearAll called')
+  // logger.info('clearAll called')
   response.status(204).end()
 })
 
 //Implement a user token check before deletion
-tasksRouter.delete('/:id', async (request, response) => {
+tasksRouter.delete('/:id', userExtractor, async (request, response) => {
+  const loggedInUserDocument = request.user
   const id = request.params.id
 
   const result = await Task.findByIdAndDelete(id)
   if (!result) {
-    logger.info('no task deleted')
+    // logger.info('no task deleted')
+    return response.status(404).json({ error: 'Task not found' });
   }
-  else {
-    logger.info('task deleted:', result)
-  }
+
+  // logger.info('task deleted:', result)
+  loggedInUserDocument.tasks = loggedInUserDocument.tasks
+    .filter(t => t.toString() !== result._id.toString())
+  await loggedInUserDocument.save()
+
   response.status(204).end()
 })
 
@@ -48,7 +53,7 @@ tasksRouter.post('/', userExtractor, async (request, response) => {
   //which attaches json request data as js object in request.body
   const newTaskBody = request.body
   const loggedInUserDocument = request.user
-  logger.info('tasks.js | loggedInUserDocument:', loggedInUserDocument)
+  // logger.info('tasks.js | loggedInUserDocument:', loggedInUserDocument)
 
   const newTask = new Task({
     taskName: newTaskBody.taskName,
@@ -62,10 +67,10 @@ tasksRouter.post('/', userExtractor, async (request, response) => {
   })
 
   const savedTask = await newTask.save()
-  logger.info('tasks.js | savedTask:', savedTask)
+  // logger.info('tasks.js | savedTask:', savedTask)
 
   loggedInUserDocument.tasks = loggedInUserDocument.tasks.concat(savedTask._id)
-  logger.info('tasks.js | updated loggedInUserDocument.tasks:', loggedInUserDocument.tasks)
+  // logger.info('tasks.js | updated loggedInUserDocument.tasks:', loggedInUserDocument.tasks)
   await loggedInUserDocument.save()
 
   response.status(201).json(savedTask)
@@ -85,7 +90,7 @@ tasksRouter.put('/:id', async (request, response) => {
   }
 
   const updatedTask = await Task.findByIdAndUpdate(id, editedTask, {new: true, runValidators: true, context: 'query'})
-  logger.info('tasks.js | updatedTask:', updatedTask)
+  // logger.info('tasks.js | updatedTask:', updatedTask)
   response.json(updatedTask)
 })
 

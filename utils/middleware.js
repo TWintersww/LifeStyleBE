@@ -6,10 +6,10 @@ const User = require('../models/user')
 //request.token field gives token
 const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
-  console.log('tokenExtractor | authorization:', authorization)
+  // logger.info('tokenExtractor | authorization:', authorization)
   if (authorization && authorization.startsWith('Bearer ')) {
     const tokenString = authorization.replace('Bearer ', '')
-    console.log('tokenExtractor | tokenString:', tokenString)
+    // logger.info('tokenExtractor | tokenString:', tokenString)
     request.token = tokenString
   }
   
@@ -22,9 +22,9 @@ const userExtractor = async (request, response, next) => {
     return response.status(401).json({error: 'token missing'})
   }
   //debugging code to inspect status of token
-  // const inspectToken= jwt.decode(request.token)
-  // console.log('inspectToken:', inspectToken)
-  // console.log('current time:', Math.floor(Date.now() / 1000))
+  const inspectToken= jwt.decode(request.token)
+  // logger.info('inspectToken:', inspectToken)
+  // logger.info('current time:', Math.floor(Date.now() / 1000))
 
   //if token parameter is null/invalid, throws JsonWebTokenError
   const decodedToken = jwt.verify(request.token, config.SECRET)
@@ -46,11 +46,11 @@ const userExtractor = async (request, response, next) => {
 }
 
 const requestLogger = (request, response, next) => {
-  logger.info('Method:', request.method)
-  logger.info('Path:  ', request.path)
-  logger.info('Body:  ', request.body)
-  logger.info('Token:  ', request.token)
-  logger.info('---')
+  // logger.info('Method:', request.method)
+  // logger.info('Path:  ', request.path)
+  // logger.info('Body:  ', request.body)
+  // logger.info('Token:  ', request.token)
+  // logger.info('---')
   next()
 }
 
@@ -59,7 +59,7 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-  logger.error(error.message)
+  // logger.error(error.message)
 
   //For GET improperly formatted id
   if (error.name === 'CastError') {

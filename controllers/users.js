@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
+const logger = require('../utils/logger')
 
 //creation of new user
 usersRouter.post('/', async (request, response) => {
@@ -19,9 +20,9 @@ usersRouter.post('/', async (request, response) => {
     name,
     passwordHash
   })
-  console.log('users.js | newUser:', newUser)
+  // logger.info('users.js | newUser:', newUser)
   const savedUser = await newUser.save()
-  console.log('users.js | savedUser:', savedUser)
+  // logger.info('users.js | savedUser:', savedUser)
 
   response.status(201).json(savedUser)
 }) 
@@ -30,7 +31,7 @@ usersRouter.post('/', async (request, response) => {
 usersRouter.get('/', async (request, response) => {
   const allUsers = await User
     .find({}).populate('tasks', {taskName: 1, description: 1, status: 1, hoursSpent: 1, createDate: 1})
-  console.log('users.js | allUsers:', allUsers)
+  // logger.info('users.js | allUsers:', allUsers)
   response.json(allUsers)
 })
 

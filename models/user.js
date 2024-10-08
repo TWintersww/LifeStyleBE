@@ -1,5 +1,12 @@
 const mongoose = require('mongoose')
 
+/*
+User:
+  String username
+  String name
+  String passwordHash
+  Task[] tasks
+*/
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -17,6 +24,13 @@ const userSchema = new mongoose.Schema({
       ref: 'Task'
     }
   ],
+
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post'
+    }
+  ]
 })
 
 userSchema.set('toJSON', {
