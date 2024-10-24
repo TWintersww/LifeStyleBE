@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 /*
 User:
@@ -44,4 +45,5 @@ userSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('User', userSchema)
+// module.exports = mongoose.model('User', userSchema)
+export default mongoose.model('User', userSchema)

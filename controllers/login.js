@@ -1,9 +1,16 @@
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
-const config = require('../utils/config')
-const loginRouter = require('express').Router()
-const User = require('../models/user')
-const logger = require('../utils/logger')
+// const jwt = require('jsonwebtoken')
+// const bcrypt = require('bcrypt')
+// const config = require('../utils/config')
+// const loginRouter = require('express').Router()
+// const User = require('../models/user')
+// const logger = require('../utils/logger')
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+import config from '../utils/config.js'
+import express from 'express'
+const loginRouter = express.Router()
+import User from '../models/user.js'
+import logger from '../utils/logger.js'
 
 loginRouter.post('/', async (request, response) => {
   //FE sends username and password
@@ -35,7 +42,7 @@ loginRouter.post('/', async (request, response) => {
     userForToken, 
     config.SECRET,
     //token lasts for only 24 hrs. Then another login is required
-    { expiresIn: '24h'}
+    // { expiresIn: '24h'}
     // { expiresIn: '10'}
   )
   // logger.info('login.js | token:', token)
@@ -46,4 +53,5 @@ loginRouter.post('/', async (request, response) => {
     .send({token, username: userFound.username, name: userFound.name})
 })
 
-module.exports = loginRouter
+// module.exports = loginRouter
+export default loginRouter

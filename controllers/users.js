@@ -1,7 +1,12 @@
-const bcrypt = require('bcrypt')
-const usersRouter = require('express').Router()
-const User = require('../models/user')
-const logger = require('../utils/logger')
+// const bcrypt = require('bcrypt')
+// const usersRouter = require('express').Router()
+// const User = require('../models/user')
+// const logger = require('../utils/logger')
+import bcrypt from 'bcrypt'
+import express from 'express'
+const usersRouter = express.Router()
+import User from '../models/user.js'
+import logger from '../utils/logger.js'
 
 //creation of new user
 usersRouter.post('/', async (request, response) => {
@@ -35,4 +40,5 @@ usersRouter.get('/', async (request, response) => {
   response.json(allUsers)
 })
 
-module.exports = usersRouter
+// module.exports = usersRouter
+export default usersRouter

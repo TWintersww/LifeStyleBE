@@ -1,7 +1,13 @@
-const tasksRouter = require('express').Router()
-const Task = require('../models/task')
-const userExtractor = require('../utils/middleware').userExtractor
-const logger = require('../utils/logger')
+// const tasksRouter = require('express').Router()
+// const Task = require('../models/task')
+// const userExtractor = require('../utils/middleware').userExtractor
+// const logger = require('../utils/logger')
+import express from 'express'
+const tasksRouter = express.Router()
+import Task from '../models/task.js'
+import middleware from '../utils/middleware.js'
+const { userExtractor } = middleware
+import logger from '../utils/logger.js'
 
 
 tasksRouter.get('/', userExtractor, async (request, response) => {
@@ -94,4 +100,5 @@ tasksRouter.put('/:id', async (request, response) => {
   response.json(updatedTask)
 })
 
-module.exports = tasksRouter
+// module.exports = tasksRouter
+export default tasksRouter

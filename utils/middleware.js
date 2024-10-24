@@ -1,7 +1,11 @@
-const logger = require('./logger')
-const jwt = require('jsonwebtoken')
-const config = require('./config')
-const User = require('../models/user')
+// const logger = require('./logger')
+// const jwt = require('jsonwebtoken')
+// const config = require('./config')
+// const User = require('../models/user')
+import logger from './logger.js'
+import jwt from 'jsonwebtoken'
+import config from './config.js'
+import User from '../models/user.js'
 
 //request.token field gives token
 const tokenExtractor = (request, response, next) => {
@@ -71,7 +75,7 @@ const errorHandler = (error, request, response, next) => {
   }
   //For User POST duplicate username
   else if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
-    return response.status(400).json({error: `user with given username already exists`})
+    return response.status(400).json({error: `User with given username already exists`})
   }
   //For Tasks POST with null/invalid token parameter
   else if (error.name === 'JsonWebTokenError') {
@@ -85,7 +89,14 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
-module.exports = {
+// module.exports = {
+//   tokenExtractor,
+//   userExtractor,
+//   requestLogger,
+//   unknownEndpoint,
+//   errorHandler
+// }
+export default {
   tokenExtractor,
   userExtractor,
   requestLogger,

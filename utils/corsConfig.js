@@ -1,4 +1,5 @@
-const cors = require('cors')
+// const cors = require('cors')
+import cors from 'cors'
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3001',
@@ -23,4 +24,5 @@ const corsOptions = {
 }
 
 const corsMiddleware = cors(corsOptions)
-module.exports = corsMiddleware
+// module.exports = corsMiddleware
+export default corsMiddleware
