@@ -6,7 +6,8 @@ const allowedOrigins = [
   'https://lifestyle-app.fly.dev',
   'http://13.58.218.201:3001',
   'http://3.147.37.8:3001',
-  'http://3.147.37.8'
+  'http://3.147.37.8',
+  'http://lifestyleapp.net/'
 ]
 // const corsOptions = {
 //   origin: 'http://localhost:5173',
