@@ -5,7 +5,8 @@ const allowedOrigins = [
   'http://localhost:3001',
   'https://lifestyle-app.fly.dev',
   'http://13.58.218.201:3001',
-  'http://3.147.37.8:3001'
+  'http://3.147.37.8:3001',
+  'http://3.147.37.8'
 ]
 // const corsOptions = {
 //   origin: 'http://localhost:5173',
@@ -13,6 +14,7 @@ const allowedOrigins = [
 // }
 const corsOptions = {
   origin: (origin, callback) => {
+    console.log('Origin:', origin)
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.indexOf(origin) !== -1) {
