@@ -3,7 +3,8 @@ import cors from 'cors'
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3001',
-  'https://lifestyle-app.fly.dev'
+  'https://lifestyle-app.fly.dev',
+  'http://13.58.218.201:3001'
 ]
 // const corsOptions = {
 //   origin: 'http://localhost:5173',
