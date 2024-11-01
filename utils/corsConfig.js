@@ -7,7 +7,8 @@ const allowedOrigins = [
   'http://13.58.218.201:3001',
   'http://3.147.37.8:3001',
   'http://3.147.37.8',
-  'http://lifestyleapp.net/'
+  'http://lifestyleapp.net',
+  'https://lifestyleapp.net'
 ]
 // const corsOptions = {
 //   origin: 'http://localhost:5173',
